@@ -182,26 +182,29 @@ exports.upvoteComplaint = async (req, res) => {
         if (!complaint) {
             return res.status(404).json({
                 success: false,
-                message: 'Issue not found',
+                message: 'Complaint not found',
             });
         }
 
-        // Prevent duplicate upvotes
-        if (complaint.upvotedBy.includes(req.user.id)) {
+        if (!complaint.upvotes) {
+            complaint.upvotes = [];
+        }
+
+        if (complaint.upvotes.includes(req.user.id)) {
             return res.status(400).json({
                 success: false,
-                message: 'You have already upvoted this issue.',
+                message: 'You have already upvoted this issue',
             });
         }
 
-        complaint.upvotes += 1;
-        complaint.upvotedBy.push(req.user.id);
+        complaint.upvotes.push(req.user.id);
 
         await complaint.save();
 
         res.status(200).json({
             success: true,
-            data: complaint,
+            message: 'Issue upvoted successfully',
+            upvotes: complaint.upvotes.length,
         });
     } catch (err) {
         res.status(500).json({
@@ -210,7 +213,6 @@ exports.upvoteComplaint = async (req, res) => {
         });
     }
 };
-
 // @desc    Delete complaint
 // @route   DELETE /api/complaints/:id
 // @access  Private/Admin

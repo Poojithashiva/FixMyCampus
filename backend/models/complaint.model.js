@@ -54,15 +54,11 @@ const complaintSchema = new mongoose.Schema({
     evidence: [{
         type: String,
     }],
-    upvotes: {
-        type: Number,
-        default: 0,
-    },
-
-    upvotedBy: [{
-        type: mongoose.Schema.Types.ObjectId,
+    upvotes: [{
+        type: mongoose.Schema.ObjectId,
         ref: 'User',
     }],
+
     createdAt: {
         type: Date,
         default: Date.now,

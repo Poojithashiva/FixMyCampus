@@ -32,6 +32,18 @@ const Dashboard = () => {
         }
     };
 
+    const handleUpvote = async (complaintId) => {
+        try {
+            await api.put(`/complaints/${complaintId}/upvote`);
+            await fetchComplaints();
+        } catch (err) {
+            alert(
+                err.response?.data?.message ||
+                'Unable to upvote this issue.'
+            );
+        }
+    };
+
     const getStatusColor = (status) => {
         switch (status) {
             case 'Pending': return '#f59e0b';
@@ -167,13 +179,23 @@ const Dashboard = () => {
                                     <td className="px-6 py-4 text-[11px] text-slate-500 hidden sm:table-cell">
                                         {new Date(complaint.createdAt).toLocaleDateString()}
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button
-                                            className="text-primary font-bold text-xs uppercase tracking-widest hover:text-primary-hover transition-colors"
-                                            onClick={() => setSelectedComplaint(complaint)}
-                                        >
-                                            View
-                                        </button>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center justify-end gap-2">
+                                            <button
+                                                className="text-primary font-bold text-xs uppercase tracking-widest hover:text-primary-hover transition-colors"
+                                                onClick={() => setSelectedComplaint(complaint)}
+                                            >
+                                                View
+                                            </button>
+
+                                            <button
+                                                onClick={() => handleUpvote(complaint._id)}
+                                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-xs font-bold"
+                                                title="Support this issue"
+                                            >
+                                                👍 {complaint.upvotes || 0}
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
